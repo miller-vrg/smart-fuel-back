@@ -8,5 +8,7 @@ export const appConfig = registerAs('app', () => ({
   mapboxApiKey: process.env.MAPBOX_API_KEY || '',
   anomalyThreshold: parseFloat(process.env.ANOMALY_THRESHOLD || '0.15'),
   defaultSafetyBuffer: parseFloat(process.env.DEFAULT_SAFETY_BUFFER || '0.15'),
-  corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:4200,http://localhost:8100').split(','),
+  corsOrigins: process.env.CORS_ORIGINS === '*'
+    ? '*'
+    : (process.env.CORS_ORIGINS || 'http://localhost:4200,http://localhost:8100').split(','),
 }));

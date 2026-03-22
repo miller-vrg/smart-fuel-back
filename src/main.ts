@@ -13,7 +13,9 @@ async function bootstrap() {
     logger: ['log', 'error', 'warn', 'debug'],
   });
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: ['/'],
+  });
 
   // Global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());
@@ -23,14 +25,15 @@ async function bootstrap() {
   app.use(compression());
 
   const configService = app.get(ConfigService);
-  const corsOrigins = configService.get<string[]>('app.corsOrigins');
+  const corsOrigins = configService.get<any>('app.corsOrigins');
 
   // CORS
   app.enableCors({
-    origin: corsOrigins,
+    origin: corsOrigins === '*' ? true : corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     credentials: true,
+    exposedHeaders: ['Authorization'],
   });
 
   // Global validation pipe (DTO validation)

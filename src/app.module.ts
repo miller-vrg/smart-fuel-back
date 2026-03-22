@@ -13,6 +13,7 @@ import { AnalyticsModule } from '@modules/analytics/analytics.module';
 import { AlertsGateway } from '@modules/alerts/alerts.gateway';
 import { AlertsModule } from '@modules/alerts/alerts.module';
 import { User } from './core/entities/user.entity';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -55,5 +56,6 @@ import { User } from './core/entities/user.entity';
     AnalyticsModule,
     AlertsModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
