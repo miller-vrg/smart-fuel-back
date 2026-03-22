@@ -21,7 +21,20 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   // Security middleware
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: false,
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://*.basemaps.cartocdn.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https://*.basemaps.cartocdn.com"],
+        connectSrc: ["'self'", "https://*.basemaps.cartocdn.com", "https://router.project-osrm.org"],
+      },
+    },
+  }));
   app.use(compression());
 
   const configService = app.get(ConfigService);
