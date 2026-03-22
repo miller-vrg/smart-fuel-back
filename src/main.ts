@@ -41,14 +41,14 @@ async function bootstrap() {
   const corsOrigins = configService.get<any>('app.corsOrigins');
 
   // CORS
-  app.enableCors({
-    origin: corsOrigins === '*' ? true : corsOrigins,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-    credentials: true,
-    exposedHeaders: ['Authorization'],
-  });
-
+  app.enableCors();
+  /* {
+      origin: corsOrigins === '*' ? true : corsOrigins,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+      credentials: true,
+      exposedHeaders: ['Authorization'],
+    } */
   // Global validation pipe (DTO validation)
   app.useGlobalPipes(
     new ValidationPipe({
