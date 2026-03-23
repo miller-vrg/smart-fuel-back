@@ -57,4 +57,9 @@ export class CreateVehicleDto {
   @IsOptional()
   @IsBoolean()
   isMain?: boolean;
+
+  @ApiPropertyOptional({ description: 'Unidad de medida preferida (liters/gallons)', example: 'liters' })
+  @IsOptional()
+  @IsString()
+  unit?: string;
 }

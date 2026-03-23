@@ -77,6 +77,10 @@ export class Vehicle {
   @Column({ default: false })
   isMain: boolean;
 
+  /** Unidad de medida preferida (liters/gallons) */
+  @Column({ length: 15, default: 'liters' })
+  unit: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
