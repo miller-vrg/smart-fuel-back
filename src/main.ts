@@ -27,11 +27,12 @@ async function bootstrap() {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://accounts.google.com", "https://apis.google.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://*.basemaps.cartocdn.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https://*.basemaps.cartocdn.com"],
-        connectSrc: ["'self'", "https://*.basemaps.cartocdn.com", "https://router.project-osrm.org"],
+        connectSrc: ["'self'", "https://*.basemaps.cartocdn.com", "https://router.project-osrm.org", "https://accounts.google.com"],
+        frameSrc: ["'self'", "https://accounts.google.com"],
       },
     },
   }));

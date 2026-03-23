@@ -19,8 +19,14 @@ export class User {
   @Column({ unique: true, length: 150 })
   email: string;
 
-  @Column({ select: false })
-  passwordHash: string;
+  @Column({ nullable: true, select: false })
+  passwordHash?: string;
+
+  @Column({ nullable: true, unique: true })
+  googleId?: string;
+
+  @Column({ nullable: true })
+  avatarUrl?: string;
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.user)
   vehicles: Vehicle[];

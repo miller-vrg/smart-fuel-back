@@ -12,6 +12,7 @@ import { PoisModule } from '@modules/pois/pois.module';
 import { AnalyticsModule } from '@modules/analytics/analytics.module';
 import { AlertsGateway } from '@modules/alerts/alerts.gateway';
 import { AlertsModule } from '@modules/alerts/alerts.module';
+import { AuthModule } from '@modules/auth/auth.module';
 import { User } from './core/entities/user.entity';
 import { AppController } from './app.controller';
 
@@ -55,6 +56,7 @@ import { AppController } from './app.controller';
     PoisModule,
     AnalyticsModule,
     AlertsModule,
+    AuthModule,
   ],
   controllers: [AppController],
 })
