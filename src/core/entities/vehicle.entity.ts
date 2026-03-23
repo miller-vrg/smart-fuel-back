@@ -30,15 +30,15 @@ export class Vehicle {
   year: string;
 
   /** Capacidad total del tanque en galones */
-  @Column('decimal', { precision: 8, scale: 2 })
+  @Column('decimal', { precision: 10, scale: 4 })
   fuelCapacityGallons: number;
 
   /** Rendimiento promedio configurado por usuario (Km/galón) */
-  @Column('decimal', { precision: 8, scale: 2 })
+  @Column('decimal', { precision: 10, scale: 4 })
   avgKmPerGallon: number;
 
   /** Nivel de combustible actual en galones (actualizado por el app) */
-  @Column('decimal', { precision: 8, scale: 2, default: 0 })
+  @Column('decimal', { precision: 10, scale: 4, default: 0 })
   currentFuelGallons: number;
 
   /** Buffer de seguridad personalizado (0.10 - 0.25) */
