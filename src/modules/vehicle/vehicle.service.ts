@@ -17,10 +17,16 @@ export class VehicleService {
     if (existing) {
       throw new ConflictException(`Ya existe un vehículo con placa ${dto.licensePlate}`);
     }
+
+    if (dto.isMain) {
+      await this.vehicleRepo.update({ isMain: true }, { isMain: false });
+    }
+
     const vehicle = this.vehicleRepo.create({
       ...dto,
       currentFuelGallons: dto.currentFuelGallons ?? 0,
       safetyBuffer: dto.safetyBuffer ?? 0.15,
+      isMain: dto.isMain ?? (await this.vehicleRepo.count()) === 0, // First vehicle is main by default
     });
     return this.vehicleRepo.save(vehicle);
   }

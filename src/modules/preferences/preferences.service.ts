@@ -37,6 +37,7 @@ export class PreferencesService {
       excludedBrands: allPrefs.filter(p => p.isExcluded).map(p => p.brandName),
       notifyGasStationKmBefore: vehicle.notifyGasStationKmBefore ?? 20,
       notifyRestStopHours: vehicle.notifyRestStopHours ?? null,
+      maxSpeedLimit: vehicle.maxSpeedLimit ?? 100,
     };
   }
 
@@ -58,6 +59,9 @@ export class PreferencesService {
       } else {
         vehicle.notifyRestStopHours = dto.notifyRestStopHours;
       }
+    }
+    if (dto.maxSpeedLimit !== undefined) {
+      vehicle.maxSpeedLimit = dto.maxSpeedLimit;
     }
     await this.vehicleRepo.save(vehicle);
 

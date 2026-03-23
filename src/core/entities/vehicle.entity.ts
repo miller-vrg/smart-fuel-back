@@ -66,8 +66,16 @@ export class Vehicle {
   @Column('int', { nullable: true })
   notifyRestStopHours: number;
 
+  /** Límite de velocidad máximo permitido por usuario */
+  @Column('int', { default: 100 })
+  maxSpeedLimit: number;
+
   @Column('jsonb', { nullable: true })
   activeTrip: any;
+
+  /** Marcado como vehículo preferido/principal */
+  @Column({ default: false })
+  isMain: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

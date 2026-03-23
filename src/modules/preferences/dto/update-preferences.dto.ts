@@ -38,6 +38,13 @@ export class UpdatePreferencesDto {
   @IsInt()
   @Min(1)
   notifyRestStopHours?: number;
+
+  @ApiPropertyOptional({ description: 'Límite de velocidad máximo permitido', example: 100 })
+  @IsOptional()
+  @IsInt()
+  @Min(30)
+  @Max(200)
+  maxSpeedLimit?: number;
 }
 
 export class PreferenceItemDto {
