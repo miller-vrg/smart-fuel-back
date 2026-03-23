@@ -5,6 +5,7 @@ import {
 import { ApiTags, ApiOperation, ApiParam, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { VehicleService } from './vehicle.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { Vehicle } from '../../core/entities/vehicle.entity';
 
 @ApiTags('vehicles')
@@ -35,6 +36,15 @@ export class VehicleController {
   @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.vehicleService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar datos generales del vehículo' })
+  @ApiParam({ name: 'id', description: 'UUID del vehículo' })
+  @ApiResponse({ status: 200, description: 'Vehículo actualizado exitosamente.', type: Vehicle })
+  @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateVehicleDto) {
+    return this.vehicleService.update(id, dto);
   }
 
   @Patch(':id/fuel-level')

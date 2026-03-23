@@ -41,6 +41,26 @@ export class VehicleService {
     return vehicle;
   }
 
+  async update(id: string, dto: Partial<Vehicle>): Promise<Vehicle> {
+    const vehicle = await this.findOne(id);
+    
+    // Safety check for license plate conflicts
+    if (dto.licensePlate && dto.licensePlate !== vehicle.licensePlate) {
+      const existing = await this.vehicleRepo.findOne({ where: { licensePlate: dto.licensePlate } });
+      if (existing) {
+        throw new ConflictException(`Ya existe un vehículo con placa ${dto.licensePlate}`);
+      }
+    }
+
+    // Handle isMain logic if changed
+    if (dto.isMain === true && !vehicle.isMain) {
+      await this.vehicleRepo.update({ isMain: true }, { isMain: false });
+    }
+
+    Object.assign(vehicle, dto);
+    return this.vehicleRepo.save(vehicle);
+  }
+
   async updateFuelLevel(vehicleId: string, gallons: number): Promise<Vehicle> {
     const vehicle = await this.findOne(vehicleId);
     vehicle.currentFuelGallons = gallons;
