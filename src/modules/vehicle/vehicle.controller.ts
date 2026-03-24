@@ -1,14 +1,17 @@
 import {
   Controller, Get, Post, Delete, Param, Body,
-  HttpCode, HttpStatus, ParseUUIDPipe, Patch, Query,
+  HttpCode, HttpStatus, ParseUUIDPipe, Patch, Query, UseGuards, Request,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiParam, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { VehicleService } from './vehicle.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 import { Vehicle } from '../../core/entities/vehicle.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('vehicles')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('vehicles')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
@@ -18,15 +21,15 @@ export class VehicleController {
   @ApiOperation({ summary: 'Registrar nuevo vehículo' })
   @ApiResponse({ status: 201, description: 'El vehículo ha sido creado exitosamente.', type: Vehicle })
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos.' })
-  create(@Body() dto: CreateVehicleDto) {
-    return this.vehicleService.create(dto);
+  create(@Body() dto: CreateVehicleDto, @Request() req: any) {
+    return this.vehicleService.create(dto, req.user.id);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos los vehículos' })
+  @ApiOperation({ summary: 'Listar todos los vehículos del usuario' })
   @ApiResponse({ status: 200, description: 'Lista de vehículos obtenida.', type: [Vehicle] })
-  findAll() {
-    return this.vehicleService.findAll();
+  findAll(@Request() req: any) {
+    return this.vehicleService.findAll(req.user.id);
   }
 
   @Get(':id')
@@ -34,8 +37,8 @@ export class VehicleController {
   @ApiOperation({ summary: 'Obtener un vehículo por su ID' })
   @ApiResponse({ status: 200, description: 'Vehículo encontrado.', type: Vehicle })
   @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.vehicleService.findOne(id);
+  findOne(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {
+    return this.vehicleService.findOne(id, req.user.id);
   }
 
   @Patch(':id')
@@ -43,8 +46,8 @@ export class VehicleController {
   @ApiParam({ name: 'id', description: 'UUID del vehículo' })
   @ApiResponse({ status: 200, description: 'Vehículo actualizado exitosamente.', type: Vehicle })
   @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateVehicleDto) {
-    return this.vehicleService.update(id, dto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateVehicleDto, @Request() req: any) {
+    return this.vehicleService.update(id, dto, req.user.id);
   }
 
   @Patch(':id/fuel-level')
@@ -55,6 +58,7 @@ export class VehicleController {
   updateFuelLevel(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('gallons') gallons: number,
+    @Request() req: any
   ) {
     return this.vehicleService.updateFuelLevel(id, gallons);
   }
@@ -67,6 +71,7 @@ export class VehicleController {
   updateSafetyBuffer(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('buffer') buffer: number,
+    @Request() req: any
   ) {
     return this.vehicleService.updateSafetyBuffer(id, buffer);
   }
@@ -78,6 +83,7 @@ export class VehicleController {
   updateActiveTrip(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() body: any,
+    @Request() req: any
   ) {
     return this.vehicleService.updateActiveTrip(id, body);
   }
@@ -87,7 +93,7 @@ export class VehicleController {
   @ApiOperation({ summary: 'Eliminar un vehículo' })
   @ApiParam({ name: 'id', description: 'UUID del vehículo a eliminar' })
   @ApiResponse({ status: 204, description: 'Vehículo eliminado con éxito.' })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string, @Request() req: any) {
     return this.vehicleService.remove(id);
   }
 }

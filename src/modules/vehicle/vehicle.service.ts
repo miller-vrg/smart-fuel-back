@@ -12,37 +12,44 @@ export class VehicleService {
     private readonly vehicleRepo: Repository<Vehicle>,
   ) {}
 
-  async create(dto: CreateVehicleDto): Promise<Vehicle> {
+  async create(dto: CreateVehicleDto, userId?: string): Promise<Vehicle> {
     const existing = await this.vehicleRepo.findOne({ where: { licensePlate: dto.licensePlate } });
     if (existing) {
       throw new ConflictException(`Ya existe un vehículo con placa ${dto.licensePlate}`);
     }
 
     if (dto.isMain) {
-      await this.vehicleRepo.update({ isMain: true }, { isMain: false });
+      await this.vehicleRepo.update({ userId, isMain: true }, { isMain: false });
     }
 
     const vehicle = this.vehicleRepo.create({
       ...dto,
+      userId,
       currentFuelGallons: dto.currentFuelGallons ?? 0,
       safetyBuffer: dto.safetyBuffer ?? 0.15,
-      isMain: dto.isMain ?? (await this.vehicleRepo.count()) === 0, // First vehicle is main by default
+      isMain: dto.isMain ?? (await this.vehicleRepo.count({ where: { userId } })) === 0, 
     });
     return this.vehicleRepo.save(vehicle);
   }
 
-  async findAll(): Promise<Vehicle[]> {
-    return this.vehicleRepo.find({ order: { createdAt: 'DESC' } });
+  async findAll(userId?: string): Promise<Vehicle[]> {
+    return this.vehicleRepo.find({ 
+      where: userId ? { userId } : {},
+      order: { createdAt: 'DESC' } 
+    });
   }
 
-  async findOne(id: string): Promise<Vehicle> {
-    const vehicle = await this.vehicleRepo.findOne({ where: { id } });
+  async findOne(id: string, userId?: string): Promise<Vehicle> {
+    const where: any = { id };
+    if (userId) where.userId = userId;
+    
+    const vehicle = await this.vehicleRepo.findOne({ where });
     if (!vehicle) throw new NotFoundException(`Vehículo ${id} no encontrado`);
     return vehicle;
   }
 
-  async update(id: string, dto: Partial<Vehicle>): Promise<Vehicle> {
-    const vehicle = await this.findOne(id);
+  async update(id: string, dto: Partial<Vehicle>, userId?: string): Promise<Vehicle> {
+    const vehicle = await this.findOne(id, userId);
     
     // Safety check for license plate conflicts
     if (dto.licensePlate && dto.licensePlate !== vehicle.licensePlate) {
@@ -54,7 +61,7 @@ export class VehicleService {
 
     // Handle isMain logic if changed
     if (dto.isMain === true && !vehicle.isMain) {
-      await this.vehicleRepo.update({ isMain: true }, { isMain: false });
+      await this.vehicleRepo.update({ userId, isMain: true }, { isMain: false });
     }
 
     Object.assign(vehicle, dto);
